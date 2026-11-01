@@ -24,12 +24,12 @@ Point `rufous.chat` at it; `index.html` already sets the canonical URL and Open 
 
 Placeholders to replace:
 
-- `OWNER` in every GitHub URL (`grep -rn OWNER .`): the repository's real owner and name.
+- GitHub links go to `stephanfeb/rufous`. The project repository is still the private
+  `stephanfeb/boubou`; until it is renamed and made public, those links 404.
 - `DOWNLOADS` in `assets/js/main.js` and the `data-platform` links in `index.html`: each platform's installer
   (`.dmg`, `.msi`/`.exe`, AppImage/`.deb`). They point to the latest release page until then.
 - `https://rufous.chat/install.sh`: the install script shown in the hero and the download section.
   It has to exist at that URL.
-- `#build` on the GitHub README: the anchor for build-from-source instructions.
 
 Claims on the page and where they come from (checked 2026-11-02 against the repository):
 

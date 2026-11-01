@@ -2,9 +2,9 @@
 
 // Release links. Point each one at its installer once release builds exist.
 const DOWNLOADS = {
-  mac: { label: 'macOS', href: 'https://github.com/OWNER/rufous/releases/latest' },
-  windows: { label: 'Windows', href: 'https://github.com/OWNER/rufous/releases/latest' },
-  linux: { label: 'Linux', href: 'https://github.com/OWNER/rufous/releases/latest' },
+  mac: { label: 'macOS', href: 'https://github.com/stephanfeb/rufous/releases/latest' },
+  windows: { label: 'Windows', href: 'https://github.com/stephanfeb/rufous/releases/latest' },
+  linux: { label: 'Linux', href: 'https://github.com/stephanfeb/rufous/releases/latest' },
 };
 
 function detectPlatform() {
