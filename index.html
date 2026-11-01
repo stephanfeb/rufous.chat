@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rufous — a local agent that checks small models</title>
+  <meta name="description" content="rufous is an agent harness for 2B–12B models on your own machine. It records every tool call the model makes and checks the model’s report against that record before a turn ends. In your editor over ACP, or in its own web UI.">
+  <meta name="theme-color" content="#111A12">
+  <link rel="canonical" href="https://rufous.chat/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rufous.chat/">
+  <meta property="og:title" content="rufous — a local agent that checks small models">
+  <meta property="og:description" content="Small models say “done”. rufous checks. An agent harness for 2B–12B models that runs on your machine and asks before it acts.">
+  <meta property="og:image" content="https://rufous.chat/assets/img/rufous-icon-512.png">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav container" aria-label="Main">
+    <a class="brand" href="#top">
+      <img src="assets/img/rufous-icon-64.png" alt="" width="36" height="36">
+      <span>rufous</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#checks">How it checks</a></li>
+      <li><a href="#small-models">Why small models</a></li>
+      <li><a href="#safety">Safety</a></li>
+      <li><a href="#surfaces">Where it runs</a></li>
+      <li><a href="https://github.com/OWNER/rufous#readme">Docs</a></li>
+      <li><a href="https://github.com/OWNER/rufous">GitHub</a></li>
+      <li class="nav-cta"><a class="btn btn-primary btn-sm" href="#download">Download</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- Hero -->
+  <section id="top" class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow">Alpha · local-first agent · written in Rust</p>
+      <h1>Small models say “done”. rufous checks.</h1>
+      <p class="hero-sub">rufous is an agent harness for 2B–12B models on your own machine, in your editor or its own web UI. It keeps a record of every tool call that the model can’t edit, and before a turn ends it checks the model’s report against it: the file you named that never got written, the write you declined, the refusal the model only remembers.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://github.com/OWNER/rufous/releases/latest" data-download>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          <span data-download-label>Download for macOS</span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/OWNER/rufous#readme">Read the docs</a>
+      </div>
+      <div class="install">
+        <span class="prompt" aria-hidden="true">$</span>
+        <code data-install>curl -fsSL https://rufous.chat/install.sh | sh</code>
+        <button class="copy-btn" type="button" aria-label="Copy install command" data-copy>
+          <svg class="icon-copy" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <svg class="icon-check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>
+        </button>
+      </div>
+      <p class="hero-note"><span data-other-platforms>Also for Windows and Linux</span> · Apache-2.0 · No account, no telemetry</p>
+    </div>
+
+    <div class="hero-visual">
+      <div class="app-mock" role="img" aria-label="The rufous app: a session list, a conversation with a run of tool calls, and a permission card asking to run cargo test">
+        <div class="app-bar" aria-hidden="true">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="title mono">rufous — ~/code/billing</span>
+        </div>
+        <div class="app-body" aria-hidden="true">
+          <div class="app-rail">
+            <span class="label mono">Sessions</span>
+            <span class="session is-active">rename-config</span>
+            <span class="session">weekly-report</span>
+            <span class="session">flaky-test</span>
+            <span class="session">docs-digest</span>
+          </div>
+          <div class="app-main">
+            <div class="msg-user">Rename the legacy_ config keys in src/ and make sure the tests still pass.</div>
+            <div class="run">
+              <div class="run-head mono"><span>run · qwen3.5:4b</span><span>4 steps</span></div>
+              <div class="run-step"><span class="pip"></span><span>search_files</span><span class="arg">"legacy_" src/</span><span class="time">0.2s</span></div>
+              <div class="run-step"><span class="pip"></span><span>read_file</span><span class="arg">src/config.rs</span><span class="time">0.4s</span></div>
+              <div class="run-step"><span class="pip"></span><span>edit_file</span><span class="arg">src/config.rs (6 changes)</span><span class="time">1.8s</span></div>
+              <div class="run-step"><span class="pip is-waiting"></span><span>run_bash</span><span class="arg">cargo test</span><span class="time">waiting</span></div>
+            </div>
+            <div class="perm">
+              <div class="perm-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5z"/></svg>
+                Permission needed
+              </div>
+              <div class="perm-q">Run <code>cargo test</code> in ~/code/billing?</div>
+              <div class="perm-actions">
+                <span class="allow">Allow once</span>
+                <span class="allow-run">Allow for this run</span>
+                <span class="deny">Deny</span>
+              </div>
+            </div>
+            <div class="composer">
+              <span class="placeholder">Ask rufous to do something…</span>
+              <span class="pill">● Offline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facts -->
+  <section class="band" aria-label="At a glance">
+    <ul class="facts container">
+      <li><strong>~1,250</strong><span>tokens of prefill: system prompt plus nine core tool schemas</span></li>
+      <li><strong>2B–12B</strong><span>parameter models, the range it is measured on</span></li>
+      <li><strong>5 rings</strong><span>of safety between the model and your system</span></li>
+      <li><strong>1 hold</strong><span>per turn at most, and an honest “I couldn’t” always passes</span></li>
+    </ul>
+  </section>
+
+  <!-- Checks -->
+  <section id="checks" class="section container">
+    <div class="section-head">
+      <p class="eyebrow">How it checks</p>
+      <h2 class="h2">A small model’s report is a claim. rufous treats it like one.</h2>
+      <p class="lede">Give a 4B model one clear instruction and it usually does it. Three turns into a conversation it often does something close to what you asked and reports success, because it follows the most recent text in front of it, not the state of your files. rufous can’t make the model remember. It can check.</p>
+    </div>
+    <div class="cards-4">
+      <article class="card">
+        <h3>A record the model can’t edit</h3>
+        <p>Every tool call goes on rufous’s own record: the tool, the path or command, whether it landed and its exit code. Writes you declined go there too.</p>
+      </article>
+      <article class="card">
+        <h3>A cheap reading of your instruction</h3>
+        <p>Which files you named with a write in mind, and where they live. Plain rules, no second model, tested against a labelled set so that every change to them is measured.</p>
+      </article>
+      <article class="card">
+        <h3>Checks when the turn ends</h3>
+        <p>Named a file it never wrote? Wrote it in the wrong folder? Wrote the name you declined somewhere else? The reply is held, with the paths that are missing.</p>
+      </article>
+      <article class="card">
+        <h3>One hold, then it lets go</h3>
+        <p>A hold says what is missing and fires once per turn. An honest “I couldn’t, because…” always passes. rufous never loops a turn to force an answer.</p>
+      </article>
+    </div>
+    <div class="section-head">
+      <p class="eyebrow">Measured, not promised</p>
+      <p class="lede">Scripted conversations on two 4B models, qwen3.5:4b and gemma4:e4b, run three to six times each. The samples are small and the numbers are early. The scripts, every run and the changelog are in the repository.</p>
+    </div>
+    <div class="cards-4">
+      <article class="card">
+        <h3>0.25 → 1.00</h3>
+        <p>Four turns that each build on the last (write a task list, tick one off, add more): the share of turns qwen3.5:4b gets right, before and after the checks. gemma4:e4b: 0.58 → 0.83.</p>
+      </article>
+      <article class="card">
+        <h3>33 of 36</h3>
+        <p>You deny a write, then say “try again”: how often the model actually tries again. rufous presents its earlier refusal as a record line, not as the model’s own words.</p>
+      </article>
+      <article class="card">
+        <h3>1.00</h3>
+        <p>Ten turns that each stand alone, appending a section to a report: both models, every turn.</p>
+      </article>
+      <article class="card">
+        <h3>0.33 → 0.73</h3>
+        <p>A rule set in turn one (“start every reply with OK”), kept across five turns by qwen3.5:4b, after turns stopped ending in a status report and started ending in a reply.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Small models -->
+  <section id="small-models" class="section container">
+    <div class="section-head">
+      <p class="eyebrow">Built for small models</p>
+      <h2 class="h2">Most agents assume a frontier model. rufous assumes a laptop.</h2>
+      <p class="lede">A 3B model can't read 20,000 tokens of instructions before it starts. So rufous starts small and lets the model reach for more only when the task needs it.</p>
+    </div>
+    <div class="cards-2">
+      <article class="card">
+        <h3>Tiny prefill</h3>
+        <p>Every run starts with a short system prompt and nine core tools. That's it.</p>
+        <ul class="chips" aria-label="Core tools">
+          <li class="chip">read_file</li>
+          <li class="chip">create_file</li>
+          <li class="chip">edit_file</li>
+          <li class="chip">list_dir</li>
+          <li class="chip">run_bash</li>
+          <li class="chip">skills</li>
+          <li class="chip">todo</li>
+          <li class="chip">enable_tools</li>
+          <li class="chip">finish</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Progressive disclosure</h3>
+        <p>Web, memory and MCP tools switch on with <code>enable_tools</code>. Skills are listed by name and loaded when used. A <code>SYSTEM.md</code> or <code>AGENTS.md</code> adds per-folder instructions.</p>
+        <ul class="chips" aria-label="Loaded on demand">
+          <li class="chip chip-dashed">web_search</li>
+          <li class="chip chip-dashed">web_fetch</li>
+          <li class="chip chip-dashed">memory_store</li>
+          <li class="chip chip-dashed">memory_recall</li>
+          <li class="chip chip-dashed">batch_tools</li>
+          <li class="chip chip-dashed">mcp_call</li>
+          <li class="chip chip-dashed">skills/</li>
+          <li class="chip chip-dashed">SYSTEM.md</li>
+          <li class="chip chip-dashed">AGENTS.md</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- Safety -->
+  <section id="safety" class="band">
+    <div class="safety container">
+      <div class="section-head">
+        <p class="eyebrow">The safety gate</p>
+        <h2 class="h2">Small models make mistakes. Yours won't become permanent.</h2>
+        <p class="lede">Every tool call passes through five rings, each with one job. When you're at the keyboard, rufous asks. When you're not, it refuses.</p>
+      </div>
+      <ol class="rings">
+        <li class="ring" data-ring="0"><span class="ring-num" aria-hidden="true">0</span><span class="ring-text"><strong>Child sandbox</strong><span>Parallel sub-agents run default-deny, write only inside their own folder and leave an audit log.</span></span></li>
+        <li class="ring" data-ring="1"><span class="ring-num" aria-hidden="true">1</span><span class="ring-text"><strong>Refused outright</strong><span>Irreversible, system-level commands never run. There is no override.</span></span></li>
+        <li class="ring" data-ring="2"><span class="ring-num" aria-hidden="true">2</span><span class="ring-text"><strong>Ask before changing the environment</strong><span>Uninstalls and environment changes need your yes. Recursive deletes stay inside the workspace.</span></span></li>
+        <li class="ring" data-ring="3"><span class="ring-num" aria-hidden="true">3</span><span class="ring-text"><strong>Stay inside the boundary</strong><span>Paths outside the workspace, system folders and sensitive files go to you for a decision.</span></span></li>
+        <li class="ring" data-ring="4"><span class="ring-num" aria-hidden="true">4</span><span class="ring-text"><strong>Keep it reversible</strong><span>Deletes go to a trash folder and overwrites leave a backup, so what slips through can be undone.</span></span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Surfaces -->
+  <section id="surfaces" class="section container">
+    <div class="section-head">
+      <p class="eyebrow">Where it runs</p>
+      <h2 class="h2">Four ways to run rufous</h2>
+    </div>
+    <div class="cards-4">
+      <article class="card surface">
+        <span class="tag">rufous serve</span>
+        <h3>Web UI</h3>
+        <p>Sessions, every tool call with its step time, inline permission cards, a live plan and the files it touched.</p>
+      </article>
+      <article class="card surface">
+        <span class="tag">desktop app · not in the alpha</span>
+        <h3>Native window</h3>
+        <p>The same interface in its own window, with voice input transcribed on-device. In development; the alpha ships the web UI, the terminal and the editor agent.</p>
+      </article>
+      <article class="card surface">
+        <span class="tag">rufous chat · run</span>
+        <h3>Terminal</h3>
+        <p>Chat interactively or run a task file unattended. <code>rufous doctor</code> checks your setup.</p>
+      </article>
+      <article class="card surface">
+        <span class="tag">rufous acp</span>
+        <h3>Your editor</h3>
+        <p>Zed over the Agent Client Protocol, with diffs, a live plan and the gate as the editor’s permission dialog. Other ACP clients should work; Zed is the one we test.</p>
+      </article>
+    </div>
+<pre class="terminal" aria-label="Example terminal commands"><span class="dim">$</span> rufous doctor
+<span class="dim">  offline mode : false
+  engine       : Ollama · http://127.0.0.1:11434
+  models       : 6</span>
+<span class="dim">$</span> rufous run qwen3.5:4b task.md ~/code/billing
+<span class="dim">$</span> rufous acp --model qwen3.5:4b   <span class="dim"># your editor's agent, over stdio</span></pre>
+  </section>
+
+  <!-- Models -->
+  <section class="models-wrap container">
+    <div class="models">
+      <div class="models-copy">
+        <h2>Bring your own model.</h2>
+        <p>Ollama, LM Studio, llama-server or any OpenAI-compatible endpoint. Switch to a cloud provider for a hard task and back again; Offline mode switches the cloud, web tools and remote MCP servers off. Per-model profiles tune each family so it behaves.</p>
+      </div>
+      <ul class="backends" aria-label="Supported backends">
+        <li>Ollama</li>
+        <li>LM Studio</li>
+        <li>llama-server</li>
+        <li>OpenAI-compatible</li>
+        <li>Cloud providers</li>
+        <li>MCP servers</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Name story -->
+  <section class="story-band">
+    <div class="story container">
+      <figure class="plate">
+        <img src="assets/img/rufous-on-branch.jpg" alt="A rufous hummingbird perched on a bare branch, with an orange back and a red-orange throat" width="952" height="1000" loading="lazy">
+      </figure>
+      <div class="story-copy">
+        <p class="eyebrow">Why a hummingbird</p>
+        <h2 class="h2">Three grams. Four thousand miles.</h2>
+        <p class="lede">The rufous hummingbird weighs about three grams, yet it makes one of the longest migrations of any bird for its size: from Mexico to Alaska and back, every year. Small doesn't have to mean limited. That's the bet rufous makes on small models.</p>
+        <p class="aside">And yes, rufous means rust-coloured. It's written in Rust.<br>
+          The choice of a bird also serves as a nod to the <a href="https://arxiv.org/html/2610.02001v1">Mingbird paper</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section id="download" class="download-wrap container">
+    <div class="download">
+      <h2>Your machine already has what it needs.</h2>
+      <p>Install rufous, point it at a model you already run, and give it something to do.</p>
+      <div class="platforms">
+        <a class="btn btn-primary" href="https://github.com/OWNER/rufous/releases/latest" data-platform="mac">macOS</a>
+        <a class="btn btn-ghost" href="https://github.com/OWNER/rufous/releases/latest" data-platform="windows">Windows</a>
+        <a class="btn btn-ghost" href="https://github.com/OWNER/rufous/releases/latest" data-platform="linux">Linux</a>
+        <a class="btn btn-ghost" href="https://github.com/OWNER/rufous#build">Build from source</a>
+      </div>
+      <div class="install">
+        <span class="prompt" aria-hidden="true">$</span>
+        <code data-install>curl -fsSL https://rufous.chat/install.sh | sh</code>
+        <button class="copy-btn" type="button" aria-label="Copy install command" data-copy>
+          <svg class="icon-copy" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <svg class="icon-check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer container">
+    <div class="brand">
+      <img src="assets/img/rufous-icon-64.png" alt="" width="28" height="28">
+      <span>rufous</span>
+      <span class="license">Apache-2.0</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="https://github.com/OWNER/rufous#readme">Docs</a></li>
+      <li><a href="https://github.com/OWNER/rufous">GitHub</a></li>
+      <li><a href="https://github.com/OWNER/rufous/blob/main/docs/acp.md">Editor setup</a></li>
+      <li><a href="https://github.com/OWNER/rufous/releases">Changelog</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
