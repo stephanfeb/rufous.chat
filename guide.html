@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rufous user guide</title>
+  <meta name="description" content="The rufous user guide: every command and flag, the files rufous reads, and how to set up a project so that a 2B–12B model can do real development work in it, with project Skills, a task tracker such as beads, and a spec-driven setup such as OpenSpec.">
+  <meta name="theme-color" content="#111A12">
+  <link rel="canonical" href="https://rufous.chat/guide.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://rufous.chat/guide.html">
+  <meta property="og:title" content="rufous user guide">
+  <meta property="og:description" content="Every command and flag, and how to do development work with small models: project Skills, beads and a spec-driven setup.">
+  <meta property="og:image" content="https://rufous.chat/assets/img/rufous-icon-512.png">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav container" aria-label="Main">
+    <a class="brand" href="index.html">
+      <img src="assets/img/rufous-icon-64.png" alt="" width="36" height="36">
+      <span>rufous</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html#checks">How it checks</a></li>
+      <li><a href="index.html#safety">Safety</a></li>
+      <li><a href="guide.html" aria-current="page">Guide</a></li>
+      <li><a href="https://github.com/stephanfeb/rufous">GitHub</a></li>
+      <li class="nav-cta"><a class="btn btn-primary btn-sm" href="index.html#download">Install</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main" class="guide container">
+
+  <aside class="toc" aria-label="On this page">
+    <p class="eyebrow">On this page</p>
+    <ol>
+      <li><a href="#getting-started">Getting started</a></li>
+      <li><a href="#commands">The commands</a>
+        <ol>
+          <li><a href="#cmd-chat">rufous chat</a></li>
+          <li><a href="#cmd-run">rufous run</a></li>
+          <li><a href="#cmd-serve">rufous serve</a></li>
+          <li><a href="#cmd-acp">rufous acp</a></li>
+          <li><a href="#cmd-mcp">rufous mcp</a></li>
+          <li><a href="#cmd-inspect">Looking around</a></li>
+        </ol>
+      </li>
+      <li><a href="#files">Files and settings</a></li>
+      <li><a href="#small-models">Development work with small models</a>
+        <ol>
+          <li><a href="#principles">The idea behind it</a></li>
+          <li><a href="#context">Context is the budget</a></li>
+          <li><a href="#agents-md">An AGENTS.md</a></li>
+          <li><a href="#skills">Project Skills</a></li>
+          <li><a href="#tracker">A task tracker</a></li>
+          <li><a href="#specs">Spec-driven development</a></li>
+          <li><a href="#workflow">Putting it together</a></li>
+        </ol>
+      </li>
+    </ol>
+  </aside>
+
+  <article class="prose">
+    <header class="guide-head">
+      <p class="eyebrow">User guide</p>
+      <h1>Working with rufous</h1>
+      <p class="lede">This guide comes in two parts. The first is a reference for the <code>rufous</code> commands and their flags. The second is about the part that matters more, which is how one sets up a project so that a 2B–12B model can do useful development work in it.</p>
+    </header>
+
+    <!-- ============================================================ -->
+    <h2 id="getting-started">Getting started</h2>
+
+    <p>Before rufous can do anything, it needs a model to talk to. We will be assuming <a href="https://ollama.com">Ollama</a> throughout this guide, since that is what rufous starts by default. Let’s install rufous, pull a model and check that the two can find each other:</p>
+
+<pre class="terminal"><span class="dim">$</span> curl -fsSL https://rufous.chat/install.sh | sh
+<span class="dim">$</span> ollama pull qwen3.5:4b
+<span class="dim">$</span> rufous doctor</pre>
+
+    <p>The install script downloads the release archive for your machine, verifies its SHA-256 checksum and puts <code>rufous</code> in <code>~/.local/bin</code>. You can pin a release with <code>RUFOUS_VERSION=v0.3.0</code>, or install somewhere else with <code>RUFOUS_INSTALL_DIR</code>.</p>
+
+    <p><code>rufous doctor</code> reads your configuration, checks that Ollama is reachable, lists your models and Skills, and probes every MCP server you have configured. If something is wrong, this is where you will find out. Once it is happy, we can give the model something to do:</p>
+
+<pre class="terminal"><span class="dim">$</span> rufous chat qwen3.5:4b ~/code/billing</pre>
+
+    <blockquote class="note">rufous reads its settings from <code>~/.ollama_agent</code>, the directory Mingbird used before it. If you have run Mingbird, rufous will pick up your <code>config.json</code>, <code>mcp.json</code>, Skills and sessions as they are.</blockquote>
+
+    <!-- ============================================================ -->
+    <h2 id="commands">The commands</h2>
+
+    <p>rufous is a single binary with a handful of subcommands. Three of them put the model to work (<code>chat</code>, <code>run</code> and <code>acp</code>), one serves the web UI, and the rest are there to help you look at what rufous sees. <code>rufous --help</code> and <code>rufous &lt;command&gt; --help</code> print the same information as this section.</p>
+
+    <h3 id="cmd-chat">rufous chat</h3>
+
+<pre class="terminal"><span class="dim">$</span> rufous chat &lt;model&gt; &lt;workdir&gt; [--session NAME] [--time-budget DURATION]</pre>
+
+    <p>An interactive conversation at the terminal, working in <code>&lt;workdir&gt;</code>. Each message you send is a <strong>Turn</strong>, and the Turn ends when the model replies or calls <code>finish</code>. This is the same Turn policy the web UI uses.</p>
+
+    <table>
+      <thead><tr><th>Flag</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>--session NAME</code></td><td>Names the session, so that it is saved under <code>~/.ollama_agent/sessions</code> and can be picked up again later.</td></tr>
+        <tr><td><code>--time-budget</code></td><td>How long rufous may work, in minutes or with a unit: <code>40</code>, <code>90m</code>, <code>1.5h</code>, or even <code>half an hour</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <p>Ctrl-C ends the run after the current step, with the session saved. A running command’s process tree is terminated along with it. A second Ctrl-C quits at once.</p>
+
+    <h3 id="cmd-run">rufous run</h3>
+
+<pre class="terminal"><span class="dim">$</span> rufous run &lt;model&gt; &lt;taskfile&gt; &lt;workdir&gt; [flags]</pre>
+
+    <p>Where <code>chat</code> is a conversation, <code>run</code> takes a task file and works on it unattended until it is done. This is the batch harness, and it is a little stricter than a chat. Before it accepts that a task is finished, it checks for the things the task asked for (the files, the passing tests, the items on the plan). Since nobody is at the keyboard, anything the Safety Gate would normally ask you about is refused.</p>
+
+    <table>
+      <thead><tr><th>Flag</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>--session NAME</code></td><td>The session name under <code>~/.ollama_agent/sessions</code>.</td></tr>
+        <tr><td><code>--new</code></td><td>Starts fresh. By default a run resumes the checkpoint it finds in the working directory, and this discards it, along with the time already spent.</td></tr>
+        <tr><td><code>--append</code></td><td>Continues the conversation, adding this task to the saved session rather than starting a new one.</td></tr>
+        <tr><td><code>--time-budget</code></td><td>As for <code>chat</code>.</td></tr>
+        <tr><td><code>--policy</code></td><td><code>unattended</code> (the default) is the batch harness described above. <code>general</code> and <code>coding</code> run the task file as a single web-chat or editor Turn, which is mostly useful for benchmarking.</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote class="note">Do note that a run resumes by default. If you edit a task file and run it again in the same folder, rufous will carry on from where the last run stopped. Pass <code>--new</code> when that is not what you want.</blockquote>
+
+    <h3 id="cmd-serve">rufous serve</h3>
+
+<pre class="terminal"><span class="dim">$</span> rufous serve [--port 8765] [--workdir PATH]</pre>
+
+    <p>Serves the local web UI on <code>127.0.0.1</code>, on port 8765 unless you say otherwise. The UI shows your sessions, every Tool Call with its step time, permission cards inline in the conversation, the live plan and the files the model touched. <code>--workdir</code> is the folder the agent works in, and it defaults to <code>~/agent_tasks/work</code>.</p>
+
+    <h3 id="cmd-acp">rufous acp</h3>
+
+<pre class="terminal"><span class="dim">$</span> rufous acp --model &lt;model&gt; --ctx &lt;tokens&gt;</pre>
+
+    <p>This is how rufous runs inside your editor. It speaks the <a href="https://agentclientprotocol.com">Agent Client Protocol</a> over stdio, so the editor starts rufous as its agent and shows you streamed replies, each Tool Call with a diff, the plan, and the Safety Gate as the editor’s own permission dialog.</p>
+
+    <table>
+      <thead><tr><th>Flag</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>--model</code></td><td>A model tag, or a display name from <code>config.json</code>. Without it rufous falls back to <code>RUFOUS_MODEL</code>.</td></tr>
+        <tr><td><code>--ctx</code></td><td>The context window in tokens, for every editor session.</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote class="note"><strong>Always pass <code>--ctx</code> under an editor.</strong> An editor starts rufous with no environment, so <code>AGENT_CTX</code> is never seen and the window falls back to 131,072 tokens. Ollama then sizes the model’s cache for that window, and a qwen3.5:9b ends up taking 17 GB. The editor Turns we have measured peak at 6,000 to 13,000 tokens, so <code>--ctx 32768</code> is plenty.</blockquote>
+
+    <p>In Zed, this goes under <code>agent_servers</code> in <code>settings.json</code>:</p>
+
+<pre class="terminal">{
+  "agent_servers": {
+    "rufous": {
+      "type": "custom",
+      "command": "/Users/you/.local/bin/rufous",
+      "args": ["acp", "--model", "qwen3.5:4b", "--ctx", "32768"],
+      "env": {}
+    }
+  }
+}</pre>
+
+    <p>Then start a new external agent thread from the Agent Panel and pick rufous. rufous keeps its own files (session, backups, trash, the todo plan) under <code>~/.ollama_agent/sessions</code> rather than in your project, so your <code>git status</code> stays clean. Other ACP clients should work too, but at the time of writing Zed is the one we test against. The <a href="https://github.com/stephanfeb/rufous/blob/main/docs/acp.md">editor notes</a> in the repository go into more detail.</p>
+
+    <h3 id="cmd-mcp">rufous mcp</h3>
+
+    <p>MCP servers give the model extra tools. The <code>rufous mcp</code> commands are shaped after <code>claude mcp</code>, so if you have used that, there is nothing new here.</p>
+
+<pre class="terminal"><span class="dim">$</span> rufous mcp add framit -- node /path/to/framit/dist/cli.js serve
+<span class="dim">$</span> rufous mcp add -s project -t http -H "Authorization: Bearer …" remote https://host/mcp
+<span class="dim">$</span> rufous mcp list
+<span class="dim">$</span> rufous mcp get framit
+<span class="dim">$</span> rufous mcp remove framit</pre>
+
+    <table>
+      <thead><tr><th>Flag on <code>add</code></th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>-s, --scope</code></td><td><code>user</code> (the default) writes to <code>~/.ollama_agent/mcp.json</code> and applies to every session. <code>project</code> writes to <code>./.mcp.json</code>.</td></tr>
+        <tr><td><code>-t, --transport</code></td><td><code>stdio</code> (the default) spawns a command. <code>http</code> talks streamable HTTP to a URL.</td></tr>
+        <tr><td><code>-e, --env KEY=VALUE</code></td><td>Environment for a stdio server. Repeat it for more than one.</td></tr>
+        <tr><td><code>-H, --header "Name: value"</code></td><td>A header for an HTTP server. Also repeatable.</td></tr>
+        <tr><td><code>--force</code></td><td>Replaces a server of the same name.</td></tr>
+      </tbody>
+    </table>
+
+    <p>Everything after <code>--</code> is the server’s command, flags included. <code>remove</code> takes <code>--scope</code> as well, which it needs only when both files have a server of that name.</p>
+
+    <h3 id="cmd-inspect">Looking around</h3>
+
+    <p>The remaining commands don’t run the model at all. They let you see what rufous sees, which turns out to be rather useful when a Turn has gone sideways.</p>
+
+    <table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>rufous doctor</code></td><td>Checks the configuration, Ollama, your models, Skills and MCP servers.</td></tr>
+        <tr><td><code>rufous models</code></td><td>Lists the models installed in Ollama.</td></tr>
+        <tr><td><code>rufous skills [workdir]</code></td><td>Lists the Skills visible from a folder.</td></tr>
+        <tr><td><code>rufous tools [--enable NAME]</code></td><td>Prints the tool schemas the model receives. <code>--enable web_fetch --enable mcp_call</code> adds advanced tools to the listing.</td></tr>
+        <tr><td><code>rufous tool &lt;name&gt; '&lt;json&gt;' [--workdir DIR]</code></td><td>Runs a single Tool Call by hand, e.g. <code>rufous tool web_search '{"query":"rust"}'</code>. MCP tools are named <code>server.tool</code>.</td></tr>
+        <tr><td><code>rufous plan</code></td><td>Shows how many sandboxed sub-agents this machine could run in parallel. Nothing is started.</td></tr>
+        <tr><td><code>rufous voice &lt;wav&gt; [--lang en] [--model TAG]</code></td><td>Transcribes a WAV file. This only works in a build with the <code>voice</code> feature, which the alpha release does not include.</td></tr>
+        <tr><td><code>rufous decide [--file F] [--model TAG] [--timeout-ms 5000]</code></td><td>Classifies messages as a question, a task or a follow-up. This one is for working on rufous itself.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ============================================================ -->
+    <h2 id="files">Files and settings</h2>
+
+    <p>rufous keeps everything of its own under <code>~/.ollama_agent</code> (or <code>RUFOUS_HOME</code>). The files you are most likely to touch are these:</p>
+
+    <ul>
+      <li><code>config.json</code> holds the engine (Ollama, an OpenAI-compatible server such as LM Studio or llama-server, or a cloud provider), the per-model profiles, Offline mode and the scope gate.</li>
+      <li><code>mcp.json</code> holds your MCP servers, as written by <code>rufous mcp add</code>.</li>
+      <li><code>skills/</code> holds your own Skills, for every project.</li>
+      <li><code>hooks.json</code> holds commands rufous runs at events in the loop, in the same shape Claude Code, Codex and Cursor use.</li>
+      <li><code>sessions/</code> holds saved sessions, and a <code>.log</code> per session with every Tool Call in it.</li>
+    </ul>
+
+    <p>A project can bring its own as well. rufous reads these from the working directory:</p>
+
+    <ul>
+      <li><code>AGENTS.md</code> and <code>SYSTEM.md</code> are added to the system prompt for every Turn.</li>
+      <li><code>.agents/skills/</code>, <code>.claude/skills/</code> and <code>skills/</code> hold the project’s Skills.</li>
+      <li><code>.mcp.json</code> adds the project’s MCP servers to yours.</li>
+      <li><code>.rufous/hooks.json</code>, and the <code>hooks</code> key of <code>.claude/settings.json</code>, add the project’s hooks.</li>
+    </ul>
+
+    <blockquote class="note">Please note that a project’s <code>.mcp.json</code> and hooks run commands the project chose. Read them before running rufous in a repository you didn’t write. <code>AGENT_PROJECT_MCP=0</code> and <code>AGENT_HOOKS=0</code> switch them off.</blockquote>
+
+    <p>A few environment variables are worth knowing about. Most of them come from Mingbird and behave the same way.</p>
+
+    <table>
+      <thead><tr><th>Variable</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>OLLAMA_HOST</code></td><td>Where to find Ollama.</td></tr>
+        <tr><td><code>AGENT_CTX</code></td><td>The context window for <code>chat</code> and <code>run</code>.</td></tr>
+        <tr><td><code>AGENT_TEMP</code>, <code>AGENT_THINK</code>, <code>AGENT_NUMPREDICT</code></td><td>Sampling temperature, thinking on or off, and the cap on tokens per reply.</td></tr>
+        <tr><td><code>AGENT_OFFLINE</code></td><td>Offline mode, which switches off the cloud provider, the web tools and HTTP MCP servers.</td></tr>
+        <tr><td><code>AGENT_SLIM_OUTPUT</code></td><td>Trims long command output. It is on by default at 32K and below.</td></tr>
+        <tr><td><code>AGENT_SYSTEM_FILE</code></td><td>A file to use as the system prompt.</td></tr>
+        <tr><td><code>AGENT_SESSION_LOG=0</code></td><td>Stops writing the per-session log.</td></tr>
+        <tr><td><code>RUFOUS_HOME</code></td><td>Uses another directory in place of <code>~/.ollama_agent</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <p>The switches accept <code>1</code>/<code>0</code>, <code>on</code>/<code>off</code>, <code>yes</code>/<code>no</code> or <code>true</code>/<code>false</code>. A value rufous cannot read is logged and ignored, rather than stopping the agent.</p>
+
+    <blockquote class="note">Do note that Offline mode does <strong>not</strong> stop a command run through <code>run_bash</code> from reaching the network. It switches off rufous’ own network tools, not your shell’s.</blockquote>
+
+    <!-- ============================================================ -->
+    <h2 id="small-models">Development work with small models</h2>
+
+    <p>Everything up to now has been about rufous. This part is mostly about your project, and it is the part that will make the larger difference. Most of it would hold for any harness running a small model.</p>
+
+    <h3 id="principles">The idea behind it</h3>
+
+    <p>A small model is good at doing one named thing with the facts in front of it. It is bad at deciding what the thing should be, and bad at guessing the facts. Give a 4B model “add a <code>--verbose</code> flag to <code>src/cli.rs</code> and print the config path” and it will usually get there. Give it “make the CLI nicer” and it will wander.</p>
+
+    <p>So the work of preparing a project comes down to one thing: we move the deciding and the guessing out of the model, and into files the model can read. In practice that means four things.</p>
+
+    <ol>
+      <li><strong>Project knowledge goes into context.</strong> An <code>AGENTS.md</code> states the layout and conventions, so the model doesn’t have to guess them.</li>
+      <li><strong>Procedures arrive as Skills.</strong> The things the model never learned, such as how your tracker works or how your tests are run, are written down once and loaded when they are needed.</li>
+      <li><strong>Open-ended writing becomes filling in a template.</strong> Small models complete a structure far better than they compose one from nothing. A spec framework gives them that structure.</li>
+      <li><strong>Decomposition happens before the model starts.</strong> A task already split into small, named items turns every Turn into “do the named thing”.</li>
+    </ol>
+
+    <p>There is a fifth point that ties these together. Whatever lives only in the conversation is lost at the next compaction or the next session. A spec, a task list and a tracker survive both.</p>
+
+    <blockquote class="note">It should be noted how much of this is measured. The guide in the repository, <a href="https://github.com/stephanfeb/rufous/blob/main/docs/guide.md">Effective Agentic Coding with Smaller Models</a>, tags every claim as measured, observed or a hypothesis. At the time of writing, the case for preparing a project rests on a handful of live sessions, the best of them a qwen3.5:9b that produced a usable first spec from one prompt once Skills, OpenSpec and beads were in place. The bench run that would measure each piece separately has not been done yet.</blockquote>
+
+    <h3 id="context">Context is the budget</h3>
+
+    <p>Before we start adding files, there is a catch we need to be honest about. Every one of them is paid for out of the same context window. rufous starts with a Prefill of about 1,250 tokens precisely so that a small model has room to work. A 2,000-token spec, a 600-token Skill and a 1,000-token file read already take up more than a tenth of a 32K window before the model has done anything. A model that was told the layout, but can no longer see the file it is editing, is worse off than one that was told nothing.</p>
+
+    <p>The short of it, is that more preparation is not always better. A few habits help:</p>
+
+    <ul>
+      <li>Set the window on purpose with <code>--ctx</code> or <code>AGENT_CTX</code>, and check the model’s memory footprint once. A window the machine cannot hold is a slower model, not a bigger one.</li>
+      <li>Keep <code>AGENTS.md</code> short. rufous cuts it at 6,000 characters in any case.</li>
+      <li>Give Skills <code>triggers:</code>, so that they are only loaded on the Turns that need them.</li>
+      <li>Measure a <code>SessionStart</code> hook before you keep it. <code>bd prime</code> prints about 3,500 characters, which is roughly a thousand tokens on a 1,250-token Prefill.</li>
+    </ul>
+
+    <h3 id="agents-md">An AGENTS.md</h3>
+
+    <p>This is the cheapest thing on the list, and the one we would do first. An <code>AGENTS.md</code> in the root of the project is added to the system prompt for every Turn. Other harnesses read the same file, so you may already have one.</p>
+
+    <p>It should state facts the model can act on: the layout, the build and test commands, the naming conventions, and what not to touch. Leave out advice the model has no way of acting on. Here is the kind of thing we mean:</p>
+
+<pre class="terminal"># billing
+
+Rust workspace. Library code in crates/core/src, the CLI in crates/cli/src.
+Build: cargo build. Test: cargo test -p core. Run one test: cargo test -p core &lt;name&gt;.
+Config keys are snake_case and live in crates/core/src/config.rs.
+Specs are in openspec/. Tasks are tracked with beads (bd). See the beads Skill.
+Do not edit anything under migrations/ or vendor/.</pre>
+
+    <blockquote class="note">Every word in that file is an instruction, as far as a small model is concerned. It turns out that a 4B model acts on a passing remark as readily as on a rule, so if something is in <code>AGENTS.md</code>, expect the model to do something about it.</blockquote>
+
+    <p>A <code>SYSTEM.md</code> works the same way, and is added before <code>AGENTS.md</code>. Keep it for what is rufous’ alone, such as a persona or house rules. If its first line is <code>&lt;!-- rufous: replace --&gt;</code>, it replaces the built-in prompt entirely, which you should only do if you are prepared to take over everything that prompt does.</p>
+
+    <h3 id="skills">Project Skills</h3>
+
+    <p>A <strong>Skill</strong> is an operating manual for the model, written as a Markdown file. Normally the model only sees each Skill’s name and a one-line description, and loads the full text when it decides it needs it. That costs almost nothing until it is used.</p>
+
+    <p>For a small model, the useful Skills are the project-specific ones. They describe how <em>this</em> project does things: how a change is proposed, how a task is claimed and closed, how the tests are run and what a passing run looks like. A Skill is either a flat file, <code>&lt;name&gt;.md</code>, or a folder with a <code>SKILL.md</code> in it. rufous looks for them in this order, and the first one with a given name wins:</p>
+
+    <ol>
+      <li><code>&lt;workdir&gt;/skills/</code></li>
+      <li><code>&lt;workdir&gt;/.agents/skills/</code> and <code>&lt;workdir&gt;/.claude/skills/</code></li>
+      <li><code>~/.ollama_agent/skills/</code></li>
+      <li><code>~/.agents/skills/</code> and <code>~/.claude/skills/</code></li>
+      <li>the Skills built into rufous</li>
+    </ol>
+
+    <p>Since rufous reads <code>.agents/skills</code> and <code>.claude/skills</code>, a Skill written for Claude Code or Codex works here as it is. There is one rufous addition worth knowing about. A small model often won’t think to load a Skill by itself, so a <code>triggers:</code> line in the frontmatter places the Skill’s full text in the prompt whenever one of its words appears in your instruction:</p>
+
+<pre class="terminal">---
+name: beads
+description: How this project tracks work with bd (beads)
+triggers: bead, beads, bd, issue, ready, claim, close
+---
+Work items are beads. Use run_bash for every bd command.
+
+- See what is ready:   bd ready
+- Read one item:       bd show &lt;id&gt;
+- Claim it:            bd update &lt;id&gt; --claim
+- Close it when done:  bd close &lt;id&gt;
+- File a new one:      bd create "&lt;title&gt;"
+
+Never invent a bd command. If a command fails, run bd --help and read it.
+Do not start implementing when you were asked to file or close beads.</pre>
+
+    <p>At most three Skills are placed in the prompt like this per task, and the log shows which ones with a <code>[skills in effect: …]</code> line. <code>autoload: true</code> does the same for every task, which is rarely what we want on a small model.</p>
+
+    <blockquote class="note">The example above is not hypothetical. In one of our editor sessions, qwen3.5:9b was told “I think we already did that one. It can be closed.” It didn’t know the <code>bd</code> verb, tried <code>bd set done</code>, <code>bd sql</code> and <code>bd dolt commit</code>, concluded the item was not done, and then implemented the feature instead. A Skill that names the five commands is a few hundred tokens. That is a far cheaper fix than any rule we could put in the harness.</blockquote>
+
+    <h3 id="tracker">A task tracker</h3>
+
+    <p>A small model is poor at choosing what to do next from an open brief. A tracker takes that choice away from it. Each item names its file or files and what “done” means, and each Turn becomes “do this item”. We use <a href="https://github.com/steveyegge/beads">beads</a> (<code>bd</code>), but a plain <code>tasks.md</code> works on the same principle.</p>
+
+    <p>Three things make a tracker work well with rufous:</p>
+
+    <ul>
+      <li><strong>Items small enough for one Turn.</strong> If an item needs the model to plan, it is too big. Split it.</li>
+      <li><strong>A Skill that teaches the commands,</strong> as above. Do not count on the model knowing your tracker.</li>
+      <li><strong>Separate Turns for bookkeeping and for code.</strong> Ask for “break the spec into beads” in one Turn, and “work on the next ready bead” in another.</li>
+    </ul>
+
+    <p>That last point is something rufous helps with. A small model asked to “break the specs into beads” will quite happily run <code>bd ready</code>, claim the first item, and start writing code. rufous’ <strong>scope gate</strong> classifies each instruction as tracker, docs or code work. When a tracker or docs Turn is about to write a source file or run a build, it asks you first. Allow it and the Turn carries on. Deny it and the model is told to report what is done and stop. If you would rather not be asked, <code>"scope_gate": "shadow"</code> in <code>config.json</code> only logs it, and <code>"off"</code> switches it off.</p>
+
+    <blockquote class="note">If your project already has a Claude Code hook that runs <code>bd prime</code> at session start, rufous will run it too, from <code>.claude/settings.json</code>. Do measure what that costs on your window (see <a href="#context">above</a>) before you leave it on.</blockquote>
+
+    <h3 id="specs">Spec-driven development</h3>
+
+    <p>The third piece is a spec. Writing a design from nothing is exactly the kind of open-ended task a small model does badly. Filling in a fixed structure is something it does rather well. A spec framework such as <a href="https://github.com/Fission-AI/OpenSpec">OpenSpec</a> provides that structure. Each change gets a folder under <code>openspec/changes/</code> with a proposal, the affected specs, and a <code>tasks.md</code>.</p>
+
+<pre class="terminal"><span class="dim">$</span> openspec init
+<span class="dim">$</span> bd init</pre>
+
+    <p>With the structure in place, we can ask the model to write the proposal for a change and fill in the spec. Then, and this part matters, <strong>review the spec yourself before any code is written.</strong> A small model will implement a wrong spec as faithfully as a right one, and it is far cheaper to fix a paragraph than a module.</p>
+
+    <blockquote class="note">Do note that rufous checks file names against your instruction. If you say “tick the first task in tasks.md” and the model writes <code>openspec/tasks.md</code> while a <code>./tasks.md</code> exists, the reply is held with both paths in the note. Name the file with its folder when there is more than one of them.</blockquote>
+
+    <h3 id="workflow">Putting it together</h3>
+
+    <p>Let’s put this together into the flow we use day to day. Each step is its own Turn, and often its own session.</p>
+
+    <ol>
+      <li><strong>Prepare the project once.</strong> Write the <code>AGENTS.md</code>, run <code>openspec init</code> and <code>bd init</code>, and add the project Skills for your spec framework, your tracker and your tests.</li>
+      <li><strong>Write the spec.</strong> “Propose a change for &lt;feature&gt; in openspec.” Read what comes back, and fix it.</li>
+      <li><strong>Split it into beads.</strong> “Break the tasks in openspec/changes/&lt;name&gt;/tasks.md into beads.” Each bead should name its file and its finish condition. The scope gate will stop the model from wandering into code.</li>
+      <li><strong>Work one bead per Turn.</strong> “Work on the next ready bead.” The model runs <code>bd ready</code>, claims it, does the work, runs the tests and closes it.</li>
+      <li><strong>Start a new session when the window fills up.</strong> Nothing is lost, since the state is in the spec and the tracker rather than in the conversation.</li>
+    </ol>
+
+    <p>This is more ceremony than one would put up with for a frontier model. With a 4B model on a laptop, it is the difference between work that lands and work that doesn’t.</p>
+
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="footer container">
+    <div class="brand">
+      <img src="assets/img/rufous-icon-64.png" alt="" width="28" height="28">
+      <span>rufous</span>
+      <span class="license">Apache-2.0</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="guide.html">Guide</a></li>
+      <li><a href="https://github.com/stephanfeb/rufous">GitHub</a></li>
+      <li><a href="https://github.com/stephanfeb/rufous/blob/main/docs/acp.md">Editor setup</a></li>
+      <li><a href="https://github.com/stephanfeb/rufous/releases">Changelog</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
