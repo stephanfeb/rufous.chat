@@ -40,9 +40,16 @@ Claims on the page and where they come from (checked 2026-11-02 against the repo
   "1B–4B" is Mingbird's claim.
 - The nine core tools are `core_tools()` in `crates/rufous-kernel/src/tools.rs`.
 - Offline mode switches the cloud provider, the network tools and HTTP MCP servers off. It does
-  not stop `run_bash` reaching the network, so the page no longer says "0 bytes leave".
+  not stop `run_bash` reaching the network, so the page no longer says "0 bytes leave", and a
+  note under "Bring your own model" says so.
 - The desktop app is marked "not in the alpha": voice is behind the `voice` cargo feature and the
   Tauri bundle is off (`bundle.active: false`). The download buttons still promise macOS,
   Windows and Linux installers.
 - Editors: only Zed is exercised (bead boubou-m64 covers the rest).
 - The rufous hummingbird figures in the name story (about three grams, migration from Mexico to Alaska).
+
+## Voice
+
+The copy is written in Stephan's voice, as described in `twostack/www/VOICE.md`: "we" and "let's",
+capitalised domain nouns (Tool Call, Turn, Record, Hold, Ring, Safety Gate), asides as
+`<blockquote class="note">`, British spelling, no marketing words, no em-dash asides or semicolon chains.
