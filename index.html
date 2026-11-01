@@ -45,7 +45,7 @@
       <li><a href="#surfaces">Where it runs</a></li>
       <li><a href="https://github.com/stephanfeb/rufous#readme">Docs</a></li>
       <li><a href="https://github.com/stephanfeb/rufous">GitHub</a></li>
-      <li class="nav-cta"><a class="btn btn-primary btn-sm" href="#download">Download</a></li>
+      <li class="nav-cta"><a class="btn btn-primary btn-sm" href="#download">Install</a></li>
     </ul>
   </nav>
 </header>
@@ -59,9 +59,9 @@
       <h1>Small models say “done”. rufous checks.</h1>
       <p class="hero-sub">rufous is an agent harness for 2B–12B models on your own machine, in your editor or its own web UI. It keeps a record of every tool call that the model can’t edit, and before a turn ends it checks the model’s report against it: the file you named that never got written, the write you declined, the refusal the model only remembers.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="https://github.com/stephanfeb/rufous/releases/latest" data-download>
+        <a class="btn btn-primary" href="#download">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-          <span data-download-label>Download for macOS</span>
+          <span>Install rufous</span>
         </a>
         <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous#readme">Read the docs</a>
       </div>
@@ -73,7 +73,7 @@
           <svg class="icon-check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>
         </button>
       </div>
-      <p class="hero-note"><span data-other-platforms>Also for Windows and Linux</span> · Apache-2.0 · No account, no telemetry</p>
+      <p class="hero-note">One binary for macOS and Linux, a zip for Windows · Apache-2.0 · No account, no telemetry</p>
     </div>
 
     <div class="hero-visual">
@@ -313,13 +313,7 @@
   <section id="download" class="download-wrap container">
     <div class="download">
       <h2>Your machine already has what it needs.</h2>
-      <p>Install rufous, point it at a model you already run, and give it something to do.</p>
-      <div class="platforms">
-        <a class="btn btn-primary" href="https://github.com/stephanfeb/rufous/releases/latest" data-platform="mac">macOS</a>
-        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest" data-platform="windows">Windows</a>
-        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest" data-platform="linux">Linux</a>
-        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous#build">Build from source</a>
-      </div>
+      <p>One command puts the <code>rufous</code> binary in <code>~/.local/bin</code>, after checking its checksum. No sudo, no build. Then point it at a model you already run and give it something to do.</p>
       <div class="install">
         <span class="prompt" aria-hidden="true">$</span>
         <code data-install>curl -fsSL https://rufous.chat/install.sh | sh</code>
@@ -327,6 +321,13 @@
           <svg class="icon-copy" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
           <svg class="icon-check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>
         </button>
+      </div>
+      <div class="platforms">
+        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest/download/rufous-aarch64-apple-darwin.tar.gz" data-platform="mac">macOS · Apple silicon</a>
+        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest/download/rufous-x86_64-apple-darwin.tar.gz" data-platform="mac">macOS · Intel</a>
+        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest/download/rufous-x86_64-unknown-linux-gnu.tar.gz" data-platform="linux">Linux · x86_64</a>
+        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest/download/rufous-aarch64-unknown-linux-gnu.tar.gz" data-platform="linux">Linux · arm64</a>
+        <a class="btn btn-ghost" href="https://github.com/stephanfeb/rufous/releases/latest/download/rufous-x86_64-pc-windows-msvc.zip" data-platform="windows">Windows · zip</a>
       </div>
     </div>
   </section>

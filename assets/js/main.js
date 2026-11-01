@@ -1,12 +1,7 @@
 // rufous.chat — progressive enhancements only; the page works without this file.
 
-// Release links. Point each one at its installer once release builds exist.
-const DOWNLOADS = {
-  mac: { label: 'macOS', href: 'https://github.com/stephanfeb/rufous/releases/latest' },
-  windows: { label: 'Windows', href: 'https://github.com/stephanfeb/rufous/releases/latest' },
-  linux: { label: 'Linux', href: 'https://github.com/stephanfeb/rufous/releases/latest' },
-};
-
+// The archive links are static in the page (GitHub's releases/latest/download/<asset>, the
+// names release.yml publishes). This only puts the visitor's platform first.
 function detectPlatform() {
   const ua = navigator.userAgentData?.platform || navigator.platform || navigator.userAgent || '';
   const s = ua.toLowerCase();
@@ -18,39 +13,12 @@ function detectPlatform() {
 }
 
 function setupDownloads() {
-  for (const [key, d] of Object.entries(DOWNLOADS)) {
-    document.querySelectorAll(`[data-platform="${key}"]`).forEach((a) => { a.href = d.href; });
-  }
-
   const platform = detectPlatform();
-  const hero = document.querySelector('[data-download]');
-  const label = document.querySelector('[data-download-label]');
-  const others = document.querySelector('[data-other-platforms]');
-  if (!hero || !label) return;
-
-  if (!platform) {
-    hero.href = '#download';
-    label.textContent = 'Download';
-    if (others) others.textContent = 'For macOS, Windows and Linux';
-    return;
-  }
-
-  hero.href = DOWNLOADS[platform].href;
-  label.textContent = `Download for ${DOWNLOADS[platform].label}`;
-  if (others) {
-    const rest = Object.keys(DOWNLOADS).filter((k) => k !== platform).map((k) => DOWNLOADS[k].label);
-    others.textContent = `Also for ${rest.join(' and ')}`;
-  }
-
-  // Put the visitor's platform first in the download section.
-  const primary = document.querySelector(`[data-platform="${platform}"]`);
-  if (primary) {
-    document.querySelectorAll('[data-platform]').forEach((a) => {
-      a.classList.toggle('btn-primary', a === primary);
-      a.classList.toggle('btn-ghost', a !== primary);
-    });
-    primary.parentElement.prepend(primary);
-  }
+  if (!platform) return;
+  const mine = [...document.querySelectorAll(`[data-platform="${platform}"]`)];
+  if (!mine.length) return;
+  const row = mine[0].parentElement;
+  mine.reverse().forEach((a) => row.prepend(a));
 }
 
 function setupCopy() {

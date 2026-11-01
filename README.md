@@ -5,7 +5,8 @@ The public website for rufous: a single static page with no build step.
 ```
 index.html            the landing page
 assets/css/styles.css palette (taken from the app icon) and layout
-assets/js/main.js     menu toggle, copy buttons, OS-aware download button; the page works without it
+assets/js/main.js     menu toggle, copy buttons, the visitor's platform first; the page works without it
+install.sh            the installer served at https://rufous.chat/install.sh
 assets/img/           app icon sizes, favicons, the hummingbird illustration
 ```
 
@@ -24,12 +25,11 @@ Point `rufous.chat` at it; `index.html` already sets the canonical URL and Open 
 
 Placeholders to replace:
 
-- GitHub links go to `stephanfeb/rufous`. The project repository is still the private
-  `stephanfeb/boubou`; until it is renamed and made public, those links 404.
-- `DOWNLOADS` in `assets/js/main.js` and the `data-platform` links in `index.html`: each platform's installer
-  (`.dmg`, `.msi`/`.exe`, AppImage/`.deb`). They point to the latest release page until then.
-- `https://rufous.chat/install.sh`: the install script shown in the hero and the download section.
-  It has to exist at that URL.
+- GitHub links go to `stephanfeb/rufous` (public since 2026-11-02).
+- The download buttons and `install.sh` fetch `releases/latest/download/rufous-<target>.tar.gz`
+  (and `.zip` for Windows) from `stephanfeb/rufous`. Those assets exist once a `v*` tag has
+  run the repository's `release.yml`. Asset names live in three places: `release.yml`,
+  `install.sh` and the `data-platform` links in `index.html`.
 
 Claims on the page and where they come from (checked 2026-11-02 against the repository):
 
