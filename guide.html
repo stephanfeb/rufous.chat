@@ -369,6 +369,19 @@ Do not start implementing when you were asked to file or close beads.</pre>
       <li><strong>Separate Turns for bookkeeping and for code.</strong> Ask for “break the spec into beads” in one Turn, and “work on the next ready bead” in another.</li>
     </ul>
 
+    <p>Write each item the way you would a good user story, and make sure it states two things:</p>
+
+    <ul>
+      <li><strong>Done when.</strong> One check the model can tell it has met, such as “<code>npm run dev</code> serves an empty <code>App.vue</code>” or “the three tests in <code>TodoServiceTest</code> pass”.</li>
+      <li><strong>Out of scope.</strong> The nearby work this item does not cover, naming the items that do: “No views or components; those are items 3 to 5.”</li>
+    </ul>
+
+    <p>A small model fills any gap in scope with more work. When the model writes the items itself, read them before any of them is worked, and add these two lines where they are missing.</p>
+
+    <blockquote class="note">This one comes from our own sessions. qwen3.5:9b split a frontend spec into seven beads, cleanly. The first bead read “set up the project structure and dependencies… to support building a modern SPA frontend”. Working it, the model wrote the scaffold and then three views and components that belonged to later beads. Those beads were later closed as “already implemented”, without ever being worked on their own terms.</blockquote>
+
+    <p>The same holds for work that is not in the tracker at all. An instruction that names no item has nothing to bound it, and a short or ambiguous one is open to a wide reading. In the same session we asked a question, got three options back, and replied “Let’s go with option 1. Also, add a gradle build trigger.” Option 1 was “serve the built files as static resources”. The model read it as “build the frontend”, and wrote four components from four different beads before it reached the build trigger. So, as a rule, <strong>only ask for work the tracker already has an item for, and name the item</strong>: “Work on bead kwp.1”, not “go with option 1”. If the work is not in the tracker yet, have the model add it as an item first, review it, and then work it. Anything else is a risk you take knowingly.</p>
+
     <p>That last point is something rufous helps with. A small model asked to “break the specs into beads” will quite happily run <code>bd ready</code>, claim the first item, and start writing code. rufous’ <strong>scope gate</strong> classifies each instruction as tracker, docs or code work. When a tracker or docs Turn is about to write a source file or run a build, it asks you first. Allow it and the Turn carries on. Deny it and the model is told to report what is done and stop. If you would rather not be asked, <code>"scope_gate": "shadow"</code> in <code>config.json</code> only logs it, and <code>"off"</code> switches it off.</p>
 
     <blockquote class="note">If your project already has a Claude Code hook that runs <code>bd prime</code> at session start, rufous will run it too, from <code>.claude/settings.json</code>. Do measure what that costs on your window (see <a href="#context">above</a>) before you leave it on.</blockquote>
@@ -391,8 +404,8 @@ Do not start implementing when you were asked to file or close beads.</pre>
     <ol>
       <li><strong>Prepare the project once.</strong> Write the <code>AGENTS.md</code>, run <code>openspec init</code> and <code>bd init</code>, and add the project Skills for your spec framework, your tracker and your tests.</li>
       <li><strong>Write the spec.</strong> “Propose a change for &lt;feature&gt; in openspec.” Read what comes back, and fix it.</li>
-      <li><strong>Split it into beads.</strong> “Break the tasks in openspec/changes/&lt;name&gt;/tasks.md into beads.” Each bead should name its file and its finish condition. The scope gate will stop the model from wandering into code.</li>
-      <li><strong>Work one bead per Turn.</strong> “Work on the next ready bead.” The model runs <code>bd ready</code>, claims it, does the work, runs the tests and closes it.</li>
+      <li><strong>Split it into beads.</strong> “Break the tasks in openspec/changes/&lt;name&gt;/tasks.md into beads.” Each bead should name its file, a “done when” and an “out of scope”. The scope gate will stop the model from wandering into code. Read the beads, and fix them, before working any of them.</li>
+      <li><strong>Work one bead per Turn, and only work beads.</strong> “Work on the next ready bead”, or name it. If something new comes up, make it a bead first. The model runs <code>bd ready</code>, claims it, does the work, runs the tests and closes it.</li>
       <li><strong>Start a new session when the window fills up.</strong> Nothing is lost, since the state is in the spec and the tracker rather than in the conversation.</li>
     </ol>
 
