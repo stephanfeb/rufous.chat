@@ -7,7 +7,8 @@ index.html            the landing page
 assets/css/styles.css palette (taken from the app icon) and layout
 assets/js/main.js     menu toggle, copy buttons, the visitor's platform first; the page works without it
 install.sh            the installer served at https://rufous.chat/install.sh
-assets/img/           app icon sizes, favicons, the hummingbird illustration
+assets/img/           app icon sizes, favicons, the hummingbird illustration, the social card
+social/               the social card's source (card.html) and render.sh, which redraws it with Chrome
 ```
 
 ## Run locally

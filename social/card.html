@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>rufous card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500&display=block">
+<style>
+  /* 1200x630, the site's palette: forest ground, cream type, the bird's orange. */
+  :root { --bg: #111A12; --fg: #F4EEE4; --muted: #B3BFAE; --leaf: #A3C293; --accent: #E2772F; --accent-text: #F29A5C; --line: #233024; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: var(--bg); }
+  body { font-family: 'Schibsted Grotesk', sans-serif; color: var(--fg); position: relative; -webkit-font-smoothing: antialiased; }
+  .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: #4E6B48; }
+  .bar::after { content: ''; position: absolute; left: 0; top: 0; width: 14px; height: 120px; background: var(--accent); }
+  .brand { position: absolute; left: 72px; top: 60px; display: flex; align-items: center; gap: 16px; }
+  .brand img { width: 56px; height: 56px; border-radius: 14px; }
+  .brand span { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; }
+  .copy { position: absolute; left: 72px; top: 172px; width: 590px; }
+  h1 { font-size: 66px; line-height: 1.04; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 26px; }
+  h1 em { font-style: normal; color: var(--accent-text); white-space: nowrap; }
+  .lede { font-size: 26px; line-height: 1.4; color: var(--muted); }
+  .foot { position: absolute; left: 72px; bottom: 52px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 22px; color: var(--leaf); }
+  .plate { position: absolute; right: 64px; top: 84px; width: 440px; height: 462px; border-radius: 32px; overflow: hidden; }
+  .plate img { width: 100%; height: 100%; object-fit: cover; display: block; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="brand"><img src="../assets/img/rufous-icon-512.png" alt=""><span>rufous</span></div>
+<div class="copy">
+  <h1>Small models say they’re done. <em>rufous checks.</em></h1>
+  <p class="lede">A harness attuned to small-model quirks. It runs 2B–12B models on your own machine, and checks their work before a Turn ends.</p>
+</div>
+<div class="plate"><img src="../assets/img/rufous-on-branch.jpg" alt=""></div>
+<div class="foot">rufous.chat</div>
+</body></html>
