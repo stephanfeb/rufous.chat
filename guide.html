@@ -72,6 +72,7 @@
         <ol>
           <li><a href="#principles">The idea behind it</a></li>
           <li><a href="#context">Context is the budget</a></li>
+          <li><a href="#model-speed">Model speed and the time limit</a></li>
           <li><a href="#agents-md">An AGENTS.md</a></li>
           <li><a href="#skills">Project Skills</a></li>
           <li><a href="#tracker">A task tracker</a></li>
@@ -256,6 +257,7 @@
         <tr><td><code>OLLAMA_HOST</code></td><td>Where to find Ollama.</td></tr>
         <tr><td><code>AGENT_CTX</code></td><td>The context window for <code>chat</code> and <code>run</code>.</td></tr>
         <tr><td><code>AGENT_TEMP</code>, <code>AGENT_THINK</code>, <code>AGENT_NUMPREDICT</code></td><td>Sampling temperature, thinking on or off, and the cap on tokens per reply.</td></tr>
+        <tr><td><code>AGENT_APITIMEOUT</code></td><td>How many seconds rufous waits for the model to send anything, 240 by default. A Turn whose model is silent for longer is stopped (see <a href="#model-speed">Model speed</a>).</td></tr>
         <tr><td><code>AGENT_OFFLINE</code></td><td>Offline mode, which switches off the cloud provider, the web tools and HTTP MCP servers.</td></tr>
         <tr><td><code>AGENT_SLIM_OUTPUT</code></td><td>Trims long command output. It is on by default at 32K and below.</td></tr>
         <tr><td><code>AGENT_SYSTEM_FILE</code></td><td>A file to use as the system prompt.</td></tr>
@@ -302,6 +304,25 @@
       <li>Give Skills <code>triggers:</code>, so that they are only loaded on the Turns that need them.</li>
       <li>Measure a <code>SessionStart</code> hook before you keep it. <code>bd prime</code> prints about 3,500 characters, which is roughly a thousand tokens on a 1,250-token Prefill.</li>
     </ul>
+
+    <h3 id="model-speed">Model speed and the reply time limit</h3>
+
+    <p>rufous waits at most <code>AGENT_APITIMEOUT</code> seconds, 240 by default, for the model to send anything. That is a hard limit. If the model is silent for longer, rufous stops the Turn and tells you so. The work done so far is kept, and the same request is not sent again, because a model that was too slow once will be too slow again. There are two ways a model runs into the limit:</p>
+
+    <ul>
+      <li><strong>Before its first token.</strong> The whole prompt is processed before anything comes back. A model that processes 90 tokens a second gets through about 21,600 tokens in 240 seconds, so a longer prompt can never start a reply. Prompt speed times the limit is the largest prompt your model can work with, whatever the window says.</li>
+      <li><strong>Partway through a reply.</strong> Ollama holds a Tool Call back until it is complete. A slow model writing a whole file in one <code>create_file</code> sends nothing while it writes, and 4,000 tokens at 12.5 tokens a second is over five minutes. Asking for the work in smaller pieces, such as a file section by section, keeps each call under the limit.</li>
+    </ul>
+
+    <p>You can read your model’s speeds from the session log. Every call logs a line such as this one:</p>
+
+<pre class="terminal">[timing: load 0.0s · prompt 5135 tok 56.1s · gen 235 tok 18.3s]</pre>
+
+    <p>That works out to about 90 tokens a second for the prompt and 13 for the reply, from a 2-bit 27B model on a laptop. To give a slow model longer, set the variable in the agent’s environment. In Zed, that is the <code>env</code> entry under <code>agent_servers</code>:</p>
+
+<pre class="terminal">"env": { "AGENT_APITIMEOUT": "600" }</pre>
+
+    <blockquote class="note">A faster model, or a smaller window, is usually the better fix. A limit raised to ten minutes means waiting ten minutes each time the model gets stuck.</blockquote>
 
     <h3 id="agents-md">An AGENTS.md</h3>
 
